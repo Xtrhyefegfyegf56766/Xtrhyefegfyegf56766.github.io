@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Laflm – A junction for lucid minds.">
+<meta name="description" content="Laflm – Early Access.">
 <title>Laflm</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
@@ -202,7 +202,8 @@ form button {
     cursor: pointer;
     opacity: 0;
     pointer-events: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 /* Animation bounce */
 @keyframes bounce {
@@ -259,7 +260,7 @@ form button {
 
 <section class="hero reveal" id="home">
     <h1 class="title">Laflm</h1>
-    <p class="slogan">A junction for lucid minds.</p>
+    <p class="slogan">Early Access</p>
 </section>
 
 <section id="projects" class="reveal">
@@ -326,10 +327,14 @@ toggle.onclick = () => {
     localStorage.setItem("theme", body.classList.contains("dark") ? "dark" : "light");
 };
 
-/* SCROLL TOP */
+/* SCROLL TOP with fade */
 const scrollTop = document.getElementById("scrollTop");
 window.addEventListener("scroll", () => {
-    scrollTop.classList.toggle("visible", window.scrollY > 300);
+    if (window.scrollY > 300) {
+        scrollTop.classList.add("visible");
+    } else {
+        scrollTop.classList.remove("visible");
+    }
 });
 scrollTop.onclick = () => scrollTo({ top: 0, behavior: "smooth" });
 
