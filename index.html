@@ -281,7 +281,7 @@ form button {
 
 <div class="overlay" id="overlay"></div>
 
-<button class="menu-btn" id="menuBtn">
+<button class="menu-btn" id="menuBtn" aria-label="Open menu">
     <div class="menu-dot"></div>
 </button>
 
@@ -292,7 +292,7 @@ form button {
     <a href="#contact">Contact</a>
 </nav>
 
-<button class="toggle" id="toggleMode">🌙 Dark</button>
+<button class="toggle" id="toggleMode" aria-label="Toggle dark mode">🌙 Dark</button>
 
 <section class="hero reveal" id="home">
     <h1 class="title">Laflm</h1>
@@ -314,6 +314,10 @@ form button {
         <a href="https://www.youtube.com/@LaflmStudio" target="_blank" rel="noopener noreferrer" class="social-box">
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube" class="social-icon">
             <p>Visit our YouTube channel</p>
+        </a>
+        <a href="https://discord.gg/FzWCGHR7FQ" target="_blank" rel="noopener noreferrer" class="social-box">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Discord_logo.svg" alt="Discord" class="social-icon">
+            <p>Join our Discord server</p>
         </a>
     </div>
 </section>
@@ -367,10 +371,16 @@ overlay.onclick = closeMenu;
 const toggle = document.getElementById("toggleMode");
 if (localStorage.getItem("theme") === "dark") body.classList.add("dark");
 
+const updateToggleText = () => {
+    toggle.textContent = body.classList.contains("dark") ? "☀️ Light" : "🌙 Dark";
+};
+updateToggleText();
+
 toggle.onclick = () => {
     if (sideMenu.classList.contains("open")) return;
     body.classList.toggle("dark");
     localStorage.setItem("theme", body.classList.contains("dark") ? "dark" : "light");
+    updateToggleText();
 };
 
 /* SCROLL TOP with fade */
@@ -402,6 +412,7 @@ const status = document.getElementById("formStatus");
 form.addEventListener("submit", function(e){
     e.preventDefault();
     status.textContent = "Sending message…";
+    form.querySelector("button").disabled = true;
 
     emailjs.sendForm(
         "service_u80xzts",
@@ -412,6 +423,8 @@ form.addEventListener("submit", function(e){
         form.reset();
     }).catch(() => {
         status.textContent = "Error sending message. Please try again.";
+    }).finally(() => {
+        form.querySelector("button").disabled = false;
     });
 });
 </script>
