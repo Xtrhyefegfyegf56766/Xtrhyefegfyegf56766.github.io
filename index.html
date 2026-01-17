@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Lucid Junction – A junction for lucid minds.">
+<title>Lucid Junction</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #f4f4f4;
+    --text: #121212;
+    --card: #ffffff;
+    --btn: #121212;
+    --btn-text: #ffffff;
+    --accent: #6c63ff;
+}
+body.dark {
+    --bg: #121212;
+    --text: #ffffff;
+    --card: #1e1e1e;
+    --btn: #ffffff;
+    --btn-text: #121212;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+}
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 99;
+}
+.overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Menu button */
+.menu-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--btn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 101;
+    border: none;
+}
+.menu-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--btn-text);
+    border-radius: 50%;
+    transition: 0.4s cubic-bezier(.19,1,.22,1);
+}
+.menu-btn.open .menu-dot {
+    width: 22px;
+    height: 22px;
+    background: transparent;
+    border: 2px solid var(--btn-text);
+}
+
+/* Side menu */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background: var(--card);
+    padding: 90px 25px;
+    transition: left 0.4s ease;
+    z-index: 100;
+}
+.side-menu.open { left: 0; }
+.side-menu a {
+    display: block;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+/* Toggle */
+.toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: none;
+    background: var(--btn);
+    color: var(--btn-text);
+    cursor: pointer;
+    z-index: 101;
+}
+body.menu-open .toggle {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Sections */
+.hero {
+    height: 100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+.title { font-size: 64px; }
+.slogan { font-size: 26px; opacity: 0.8; }
+
+section {
+    padding: 80px 20px;
+    text-align: center;
+}
+.section-title {
+    font-size: 42px;
+    margin-bottom: 20px;
+}
+
+/* Cards */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+    gap: 25px;
+    max-width: 1000px;
+    margin: auto;
+}
+.card {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 16px;
+}
+
+/* Contact */
+form {
+    max-width: 500px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+input, textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+}
+form button {
+    padding: 12px;
+    border-radius: 999px;
+    border: none;
+    background: var(--btn);
+    color: var(--btn-text);
+    cursor: pointer;
+}
+
+/* Feedback message */
+.form-status {
+    margin-top: 15px;
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+/* Scroll top */
+.scroll-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--btn);
+    color: var(--btn-text);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+}
+.scroll-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Reveal */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 1s ease;
+}
+.reveal.visible {
+    opacity: 1;
+    transform: none;
+}
+
+.credits {
+    font-size: 12px;
+    opacity: 0.7;
+    text-align: center;
+    padding-bottom: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<button class="menu-btn" id="menuBtn">
+    <div class="menu-dot"></div>
+</button>
+
+<nav class="side-menu" id="sideMenu">
+    <a href="#home">Home</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<button class="toggle" id="toggleMode">🌙 Dark</button>
+
+<section class="hero reveal" id="home">
+    <h1 class="title">Lucid Junction</h1>
+    <p class="slogan">A junction for lucid minds.</p>
+</section>
+
+<section id="projects" class="reveal">
+    <h2 class="section-title">Projects</h2>
+    <div class="cards">
+        <div class="card">Project One</div>
+        <div class="card">Project Two</div>
+        <div class="card">Project Three</div>
+    </div>
+</section>
+
+<section id="contact" class="reveal">
+    <h2 class="section-title">Contact</h2>
+
+    <form id="contactForm">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <textarea name="message" rows="4" placeholder="Message" required></textarea>
+        <button type="submit">Send</button>
+        <div class="form-status" id="formStatus"></div>
+    </form>
+</section>
+
+<button class="scroll-top" id="scrollTop">↑</button>
+<div class="credits">by Laflem Studio</div>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+/* INIT EMAILJS */
+(function(){
+    emailjs.init("-VtuWGqNeklTssS70");
+})();
+
+/* MENU */
+const body = document.body;
+const menuBtn = document.getElementById("menuBtn");
+const sideMenu = document.getElementById("sideMenu");
+const overlay = document.getElementById("overlay");
+
+const closeMenu = () => {
+    menuBtn.classList.remove("open");
+    sideMenu.classList.remove("open");
+    overlay.classList.remove("active");
+    body.classList.remove("menu-open");
+};
+
+menuBtn.onclick = () => {
+    const open = menuBtn.classList.toggle("open");
+    sideMenu.classList.toggle("open");
+    overlay.classList.toggle("active");
+    body.classList.toggle("menu-open", open);
+};
+overlay.onclick = closeMenu;
+
+/* THEME */
+const toggle = document.getElementById("toggleMode");
+if (localStorage.getItem("theme") === "dark") body.classList.add("dark");
+
+toggle.onclick = () => {
+    if (sideMenu.classList.contains("open")) return;
+    body.classList.toggle("dark");
+    localStorage.setItem("theme", body.classList.contains("dark") ? "dark" : "light");
+};
+
+/* SCROLL TOP */
+const scrollTop = document.getElementById("scrollTop");
+window.addEventListener("scroll", () => {
+    scrollTop.classList.toggle("visible", window.scrollY > 300);
+});
+scrollTop.onclick = () => scrollTo({ top: 0, behavior: "smooth" });
+
+/* REVEAL */
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.2 });
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+/* CONTACT FORM */
+const form = document.getElementById("contactForm");
+const status = document.getElementById("formStatus");
+
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+    status.textContent = "Sending message…";
+
+    emailjs.sendForm(
+        "service_u80xzts",
+        "template_rqjrt7h",
+        this
+    ).then(() => {
+        status.textContent = "Message sent successfully ✨";
+        form.reset();
+    }).catch(() => {
+        status.textContent = "Error sending message. Please try again.";
+    });
+});
+</script>
+
+</body>
+</html>
