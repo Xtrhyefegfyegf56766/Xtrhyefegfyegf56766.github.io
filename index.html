@@ -274,6 +274,25 @@ form button {
     text-align: center;
     padding-bottom: 15px;
 }
+
+/* ASCII Glitch effect */
+#asciiArt {
+    font-family: monospace;
+    white-space: pre;
+    line-height: 7px;
+    font-size: 8px;
+    color: var(--text);
+    opacity: 0;
+    position: relative;
+}
+@keyframes glitchAppear {
+    0% { opacity: 0; transform: translate(0,0); }
+    20% { opacity: 1; transform: translate(-1px,0); }
+    40% { opacity: 1; transform: translate(1px,1px); }
+    60% { opacity: 1; transform: translate(-1px,-1px); }
+    80% { opacity: 1; transform: translate(1px,0); }
+    100% { opacity: 1; transform: translate(0,0); }
+}
 </style>
 </head>
 
@@ -295,8 +314,13 @@ form button {
 <button class="toggle" id="toggleMode" aria-label="Toggle dark mode">🌙 Dark</button>
 
 <section class="hero reveal" id="home">
-    <h1 class="title">Laflm</h1>
-    <p class="slogan">Early Access</p>
+    <pre id="asciiArt">░▒▓█▓▒░       ░▒▓██████▓▒░░▒▓████████▓▒░▒▓█▓▒░      ░▒▓██████████████▓▒░  
+░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓█▓▒░      ░▒▓████████▓▒░▒▓██████▓▒░ ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░</pre>
 </section>
 
 <section id="projects" class="reveal">
@@ -426,6 +450,12 @@ form.addEventListener("submit", function(e){
     }).finally(() => {
         form.querySelector("button").disabled = false;
     });
+});
+
+/* ASCII Glitch effect on load */
+window.addEventListener('load', () => {
+    const ascii = document.getElementById('asciiArt');
+    ascii.style.animation = 'glitchAppear 1s ease forwards';
 });
 </script>
 
