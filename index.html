@@ -124,8 +124,14 @@ body {
 }
 
 /* ── Toggle ── */
-.toggle {
+.toggle-group {
   position: fixed; top: 20px; right: 20px;
+  display: flex; gap: 8px; z-index: 101;
+  transition: opacity 0.2s;
+}
+body.menu-open .toggle-group { opacity: 0.3; pointer-events: none; }
+
+.toggle {
   width: 44px; height: 44px;
   border-radius: 50%;
   border: 1px solid var(--card-border);
@@ -134,11 +140,12 @@ body {
   cursor: pointer;
   font-size: 18px;
   display: flex; align-items: center; justify-content: center;
-  z-index: 101;
-  transition: background var(--speed), transform 0.2s, opacity 0.2s;
+  transition: background var(--speed), transform 0.2s;
 }
 .toggle:hover { transform: scale(1.07); }
-body.menu-open .toggle { opacity: 0.3; pointer-events: none; }
+.toggle-lang {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+}
 
 /* ── Sections ── */
 section { padding: 100px 24px; }
@@ -217,7 +224,7 @@ section { padding: 100px 24px; }
 
 .hero-scroll {
   position: absolute; bottom: 32px;
-  left: 50%; transform: translateX(-50%);
+  left: 0; right: 0;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   opacity: 0; animation: fadeUp 0.5s ease 1.4s forwards;
 }
@@ -439,7 +446,10 @@ footer {
   <p class="menu-footer">Laflm Studio © 2025</p>
 </nav>
 
-<button class="toggle" id="toggleMode" aria-label="Basculer mode sombre">🌙</button>
+<div class="toggle-group">
+  <button class="toggle toggle-lang" id="toggleLang" aria-label="Changer la langue">EN</button>
+  <button class="toggle" id="toggleMode" aria-label="Basculer mode sombre">🌙</button>
+</div>
 
 <!-- ── Hero ── -->
 <section class="hero" id="home">
@@ -466,22 +476,13 @@ footer {
   </div>
   <div class="cards-grid">
     <div class="project-card">
-      <div class="card-icon">🎮</div>
-      <h3 class="card-title">Project One</h3>
-      <p class="card-desc">Un jeu indépendant en cours de développement sur Godot. Mécaniques originales, univers cohérent.</p>
-      <span class="card-status">En développement</span>
+      <p class="card-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
     </div>
     <div class="project-card">
-      <div class="card-icon">🛠️</div>
-      <h3 class="card-title">Project Two</h3>
-      <p class="card-desc">Outil interne pour la gestion de contenu et la pipeline de création du studio.</p>
-      <span class="card-status">Bêta privée</span>
+      <p class="card-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
     </div>
     <div class="project-card">
-      <div class="card-icon">🌐</div>
-      <h3 class="card-title">Project Three</h3>
-      <p class="card-desc">Expérience interactive en ligne. Concept en phase d'exploration et de prototypage.</p>
-      <span class="card-status">Concept</span>
+      <p class="card-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
     </div>
   </div>
 </section>
@@ -594,6 +595,127 @@ toggle.addEventListener("click", () => {
   applyTheme(!body.classList.contains("dark"));
 });
 
+/* ── Langue ── */
+const translations = {
+  fr: {
+    navHome: "Accueil",
+    navProjects: "Projets",
+    navSocial: "Réseaux",
+    navContact: "Contact",
+    menuFooter: "Laflm Studio © 2025",
+    heroTag: "Early Access",
+    heroScroll: "Scroll",
+    projectsLabel: "Ce qu'on construit",
+    projectsTitle: "Projets",
+    socialLabel: "Nous suivre",
+    socialTitle: "Réseaux sociaux",
+    discordSub: "Rejoindre le serveur",
+    contactLabel: "On vous répond",
+    contactTitle: "Contact",
+    namePlaceholder: "Votre nom",
+    emailPlaceholder: "Votre email",
+    messagePlaceholder: "Votre message…",
+    submitBtn: "Envoyer",
+    sending: "Envoi en cours…",
+    sent: "Message envoyé ✓",
+    error: "Erreur lors de l'envoi. Réessayez.",
+    footer: "Laflm Studio — Early Access 2025",
+    menuAriaLabel: "Ouvrir le menu",
+    darkAriaLabel: "Mode sombre",
+    lightAriaLabel: "Mode clair",
+    langBtn: "EN",
+  },
+  en: {
+    navHome: "Home",
+    navProjects: "Projects",
+    navSocial: "Networks",
+    navContact: "Contact",
+    menuFooter: "Laflm Studio © 2025",
+    heroTag: "Early Access",
+    heroScroll: "Scroll",
+    projectsLabel: "What we're building",
+    projectsTitle: "Projects",
+    socialLabel: "Follow us",
+    socialTitle: "Social networks",
+    discordSub: "Join the server",
+    contactLabel: "We'll get back to you",
+    contactTitle: "Contact",
+    namePlaceholder: "Your name",
+    emailPlaceholder: "Your email",
+    messagePlaceholder: "Your message…",
+    submitBtn: "Send",
+    sending: "Sending…",
+    sent: "Message sent ✓",
+    error: "Error sending. Please try again.",
+    footer: "Laflm Studio — Early Access 2025",
+    menuAriaLabel: "Open menu",
+    darkAriaLabel: "Dark mode",
+    lightAriaLabel: "Light mode",
+    langBtn: "FR",
+  }
+};
+
+const langBtn = document.getElementById("toggleLang");
+let currentLang = localStorage.getItem("lang") || "fr";
+
+const applyLang = (lang) => {
+  const t = translations[lang];
+  currentLang = lang;
+  localStorage.setItem("lang", lang);
+  langBtn.textContent = t.langBtn;
+  document.documentElement.lang = lang;
+
+  // Nav
+  const navLinks = document.querySelectorAll(".nav-link");
+  const navKeys = ["navHome","navProjects","navSocial","navContact"];
+  navLinks.forEach((a, i) => {
+    const dot = a.querySelector(".nav-dot");
+    a.textContent = t[navKeys[i]];
+    if (dot) a.prepend(dot);
+  });
+
+  // Menu footer
+  document.querySelector(".menu-footer").textContent = t.menuFooter;
+
+  // Hero
+  document.querySelector(".hero-tag").textContent = t.heroTag;
+  document.querySelector(".hero-scroll span").textContent = t.heroScroll;
+
+  // Projects section
+  document.querySelector("#projects .section-label").textContent = t.projectsLabel;
+  document.querySelector("#projects .section-title").textContent = t.projectsTitle;
+
+  // Social section
+  document.querySelector("#social .section-label").textContent = t.socialLabel;
+  document.querySelector("#social .section-title").textContent = t.socialTitle;
+  document.querySelector(".social-card:last-child .social-sub").textContent = t.discordSub;
+
+  // Contact section
+  document.querySelector("#contact .section-label").textContent = t.contactLabel;
+  document.querySelector("#contact .section-title").textContent = t.contactTitle;
+  document.querySelector("input[name='name']").placeholder = t.namePlaceholder;
+  document.querySelector("input[name='email']").placeholder = t.emailPlaceholder;
+  document.querySelector("textarea[name='message']").placeholder = t.messagePlaceholder;
+  document.querySelector(".submit-btn").textContent = t.submitBtn;
+
+  // Footer
+  document.querySelector("footer span").textContent = t.footer;
+
+  // Theme toggle aria-label
+  const isDark = body.classList.contains("dark");
+  toggle.setAttribute("aria-label", isDark ? t.lightAriaLabel : t.darkAriaLabel);
+  menuBtn.setAttribute("aria-label", t.menuAriaLabel);
+
+  // Store sending/sent/error strings for the form
+  window._t = t;
+};
+
+applyLang(currentLang);
+
+langBtn.addEventListener("click", () => {
+  applyLang(currentLang === "fr" ? "en" : "fr");
+});
+
 /* ── Navigation active ── */
 const navLinks   = document.querySelectorAll(".nav-link");
 const sections   = document.querySelectorAll("section[id]");
@@ -627,11 +749,12 @@ const status = document.getElementById("formStatus");
 const btn    = form.querySelector("button");
 form.addEventListener("submit", function(e){
   e.preventDefault();
-  status.textContent = "Envoi en cours…";
+  const t = window._t || translations.fr;
+  status.textContent = t.sending;
   btn.disabled = true;
   emailjs.sendForm("service_u80xzts", "template_rqjrt7h", this)
-    .then(() => { status.textContent = "Message envoyé ✓"; form.reset(); })
-    .catch(() => { status.textContent = "Erreur lors de l'envoi. Réessayez."; })
+    .then(() => { status.textContent = t.sent; form.reset(); })
+    .catch(() => { status.textContent = t.error; })
     .finally(() => { btn.disabled = false; });
 });
 </script>
